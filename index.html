@@ -204,7 +204,9 @@ async function analyze(){
     cachedData=d;
     var di=d.district_intelligence;
     document.getElementById('p_district').textContent=di.district+' '+(di.commercial_type||'');
-    var risk=d.analysis_result.risk_level;
+    var olrVal=d.analysis_result.current_olr;
+    var thresh=d.district_intelligence.safety_threshold;
+    var risk=olrVal>=thresh?'Low':(olrVal>=thresh*0.8?'Medium':'High');
     var riskEl=document.getElementById('p_risk_text');
     if(risk==='Low'){riskEl.textContent='此區域風險：低風險';riskEl.className='risk-level-text safe';document.getElementById('p_risk_sub').textContent='基本條件良好，建議查看完整報告確認細節';}
     else if(risk==='Medium'){riskEl.textContent='此區域風險：中高風險';riskEl.className='risk-level-text warning';document.getElementById('p_risk_sub').textContent='偵測到潛在風險項目，強烈建議查看完整診斷';}
@@ -232,15 +234,18 @@ function renderFullReport(d){
   document.getElementById('r_zone').textContent=di.commercial_type||'一般商圈';
   document.getElementById('r_threshold').textContent=di.safety_threshold;
   document.getElementById('r_note').textContent=di.note||'';
-  document.getElementById('r_olr').textContent=d.analysis_result.current_olr;
-  var sc=d.analysis_result.risk_level==='Low'?'bg-safe':d.analysis_result.risk_level==='Medium'?'bg-warning':'bg-danger';
+  var olrVal=d.analysis_result.current_olr;
+  var thresh=di.safety_threshold;
+  document.getElementById('r_olr').textContent=olrVal;
+  var sc=olrVal>=thresh?'bg-safe':(olrVal>=thresh*0.8?'bg-warning':'bg-danger');
   var statusEl=document.getElementById('r_status');
   statusEl.className='status-badge '+sc;
-  statusEl.textContent=d.analysis_result.status==='Safe'?'安全':d.analysis_result.status==='Warning'?'警戒':'危險';
+  statusEl.textContent=olrVal>=thresh?'安全':(olrVal>=thresh*0.8?'警戒':'危險');
+  document.getElementById('r_note').textContent=di.note||'';
   var p=d.prescription;
   document.getElementById('r_target_rent').textContent='NT$ '+Number(p.safe_rent).toLocaleString();
   document.getElementById('r_nego').textContent=p.negotiation_percent+'（NT$ '+Number(p.negotiation_margin).toLocaleString()+'）';
-  document.getElementById('r_revenue_needed').textContent='NT$ '+Number(p.survival_threshold_revenue).toLocaleString();
+  document.getElementById('r_revenue_needed').textContent='NT$ '+Number(p.survival_threshold_revenue||0).toLocaleString();
   document.getElementById('r_drop').textContent=p.revenue_drop_allowance;
   document.getElementById('r_advice').textContent=d.recommendation;
   var st=d.stress_test;
@@ -249,7 +254,7 @@ function renderFullReport(d){
   document.getElementById('r_rent_up_olr').textContent=s1.olr||'-';
   var stressEl=document.getElementById('r_stress_olr');
   stressEl.textContent=s2.olr||'-';
-  stressEl.className='row-value '+((s2.olr>=1.0)?'stress-ok':'stress-fail');
+  stressEl.className='row-value '+((s2.olr>=thresh)?'stress-ok':'stress-fail');
   document.getElementById('r_stress_warn').textContent=st.resilience||'-';
   document.getElementById('mapBtn').onclick=function(){window.open('https://www.google.com/maps/search/'+encodeURIComponent(document.getElementById('addr').value)+'+咖啡廳','_blank');};
   document.getElementById('result').style.display='block';
