@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -147,7 +148,7 @@ button.main-btn:disabled{background:#334155;cursor:not-allowed;}
 </div>
 <div class="modal-overlay" id="leadModal">
   <div class="modal-box">
-    <h2>&#128202; 查看完整診斷報告</h2>
+        <h2>&#128202; 查看完整診斷報告</h2>
     <p>填寫以下資訊，立即免費解鎖完整報告（含租金安全線、壓力測試、競業分析）</p>
     <label>姓名 *</label>
     <input id="f_name" type="text" placeholder="您的姓名">
@@ -199,7 +200,7 @@ async function analyze(){
   btn.textContent='AI 診斷中...';
   btn.disabled=true;
   try{
-    var res=await fetch(API,{method:'POST',headers: { 'Content-Type': 'application/json', 'X-Password': 'PRSM5566' },body:JSON.stringify({address:addr,rent:rent,revenue:revenue})});
+    var res=await fetch(API,{method:'POST',headers: { 'Content-Type': 'application/json', 'X-Passwheaders:{'Content-Type':'application/json'},ord': 'PRSM5566' },body:JSON.stringify({address:addr,rent:rent,revenue:revenue,password:'PRSM5566'});
     if(!res.ok){var err=await res.json();alert('錯誤：'+(err.error||res.status));return;}
     var d=await res.json();
     cachedData=d;
