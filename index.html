@@ -63,7 +63,6 @@ button.main-btn:disabled{background:#334155;cursor:not-allowed;}
 .btn-pdf{background:#374151;color:#fff;}
 .zone-tag{display:inline-block;background:#1e3a5f;color:#7dd3fc;padding:2px 10px;border-radius:10px;font-size:0.8rem;margin-left:8px;}
 .district-note{font-size:0.8rem;color:#64748b;margin-top:6px;}
-.revenue-warn{color:#ef4444;font-size:0.8rem;margin-top:4px;}
 @media print{.input-card,.btn-row,button,.watermark{display:none!important;}.container{max-width:100%;}}
 </style>
 </head>
@@ -258,11 +257,11 @@ function renderFullReport(d){
   rateEl.textContent=rate+'%';
   rateEl.className='row-value '+(rate>=100?'stress-ok':(rate>=70?'warning':'danger'));
   document.getElementById('r_drop').textContent=p.revenue_drop_allowance;
-  document.getElementById('r_advice').textContent=d.recommendvar advice='';
-if(rate<50){advice='⚠️ 警示：您的營收僅達健康目標的'+rate+'%，距離健康水位差距過大，建議重新評估選址或業種。';}
-else if(rate<80){advice='注意：營收達標率'+rate+'%，尚有提升空間，建議強化差異化定位。';}
-else{advice='✅ '+d.recommendation;}
-document.getElementById('r_advice').textContent=advice;ation;
+  var advice='';
+  if(rate<50){advice='警示：您的營收僅達健康目標的'+rate+'%，距離健康水位差距過大，建議重新評估選址或業種。';}
+  else if(rate<80){advice='注意：營收達標率'+rate+'%，尚有提升空間，建議強化差異化定位。';}
+  else{advice='營收健康，'+d.recommendation;}
+  document.getElementById('r_advice').textContent=advice;
   var st=d.stress_test;
   var s1=st.scenario_1||{};
   var s2=st.scenario_2||{};
