@@ -199,7 +199,7 @@ async function analyze(){
   btn.textContent='AI 診斷中...';
   btn.disabled=true;
   try{
-    var res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr,rent:rent,revenue:revenue})});
+    var res=await fetch(API,{method:'POST',headers: { 'Content-Type': 'application/json', 'X-Password': 'PRSM5566' },body:JSON.stringify({address:addr,rent:rent,revenue:revenue})});
     if(!res.ok){var err=await res.json();alert('錯誤：'+(err.error||res.status));return;}
     var d=await res.json();
     cachedData=d;
