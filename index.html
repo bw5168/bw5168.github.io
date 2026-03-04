@@ -37,7 +37,6 @@ button.main-btn:disabled{background:#334155;cursor:not-allowed;}
 .modal-box input,.modal-box select{width:100%;padding:10px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff;font-size:0.95rem;}
 .modal-box select option{background:#1e293b;}
 .consent{font-size:0.78rem;color:#64748b;margin-top:16px;line-height:1.5;}
-.consent a{color:#38bdf8;}
 .submit-btn{width:100%;padding:14px;background:#0ea5e9;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer;font-weight:bold;margin-top:16px;}
 .submit-btn:hover{background:#0284c7;}
 #result{display:none;position:relative;}
@@ -71,14 +70,14 @@ button.main-btn:disabled{background:#334155;cursor:not-allowed;}
 <div class="container">
   <div class="header">
     <div class="badge">PRSM V3 · District Intelligence</div>
-    <h1>&#127978; PRSM 選址存活診斷引擎</h1>
+    <h1>PRSM 選址存活診斷引擎</h1>
     <p class="sub">輸入地址與租金，AI 自動診斷營運風險並提供改善處方</p>
   </div>
   <div class="input-card">
     <input id="addr" type="text" placeholder="例：台北市中山區南京東路二段45號">
     <input id="rent" type="number" placeholder="月租金（元）例：50000">
     <input id="revenue" type="number" placeholder="預估月營收（元）例：300000">
-    <button class="main-btn" onclick="analyze()">&#128269; 立即診斷</button>
+    <button class="main-btn" onclick="analyze()">立即診斷</button>
   </div>
   <div id="risk-preview">
     <div class="risk-banner">
@@ -86,10 +85,10 @@ button.main-btn:disabled{background:#334155;cursor:not-allowed;}
       <div class="risk-level-text" id="p_risk_text"></div>
       <div class="risk-sublabel" id="p_risk_sub"></div>
       <div class="unlock-hint">
-        &#128203; 完整報告包含：租金安全線、壓力測試、競業密度分析、生存處方箋<br>
-        &#128073; 免費註冊即可查看完整報告
+        完整報告包含：租金安全線、壓力測試、競業密度分析、生存處方箋<br>
+        免費註冊即可查看完整報告
       </div>
-      <button class="unlock-btn" onclick="openModal()">&#128275; 免費查看完整報告</button>
+      <button class="unlock-btn" onclick="openModal()">免費查看完整報告</button>
     </div>
   </div>
   <div id="result">
@@ -100,12 +99,12 @@ button.main-btn:disabled{background:#334155;cursor:not-allowed;}
         <span class="zone-tag" id="r_zone"></span>
       </div>
       <div class="olr-num" id="r_olr">-</div>
-      <div class="olr-label">營租比 OLR（安全門檻 &ge; <span id="r_threshold">1.3</span>）</div>
+      <div class="olr-label">營租比 OLR（安全門檻 <span id="r_threshold">1.3</span>）</div>
       <div class="status-badge" id="r_status"></div>
       <div class="district-note" id="r_note"></div>
     </div>
     <div class="card">
-      <h3>&#128203; 生存處方箋</h3>
+      <h3>生存處方箋</h3>
       <div class="row">
         <span class="row-label">建議安全租金</span>
         <span class="row-value safe" id="r_target_rent">-</span>
@@ -125,7 +124,7 @@ button.main-btn:disabled{background:#334155;cursor:not-allowed;}
       <div class="prescription" id="r_advice"></div>
     </div>
     <div class="card">
-      <h3>&#9889; 壓力測試（人流降20%）</h3>
+      <h3>壓力測試（人流降20%）</h3>
       <div class="row">
         <span class="row-label">租金上漲10% OLR</span>
         <span class="row-value" id="r_rent_up_olr">-</span>
@@ -140,14 +139,14 @@ button.main-btn:disabled{background:#334155;cursor:not-allowed;}
       </div>
     </div>
     <div class="btn-row">
-      <button class="btn-secondary btn-map" id="mapBtn">&#128205; 查看周邊競爭熱圖</button>
-      <button class="btn-secondary btn-pdf" onclick="window.print()">&#128229; 下載 PDF 報告</button>
+      <button class="btn-secondary btn-map" id="mapBtn">查看周邊競爭熱圖</button>
+      <button class="btn-secondary btn-pdf" onclick="window.print()">下載 PDF 報告</button>
     </div>
   </div>
 </div>
 <div class="modal-overlay" id="leadModal">
   <div class="modal-box">
-        <h2>&#128202; 查看完整診斷報告</h2>
+    <h2>查看完整診斷報告</h2>
     <p>填寫以下資訊，立即免費解鎖完整報告（含租金安全線、壓力測試、競業分析）</p>
     <label>姓名 *</label>
     <input id="f_name" type="text" placeholder="您的姓名">
@@ -182,7 +181,7 @@ button.main-btn:disabled{background:#334155;cursor:not-allowed;}
       <option value="還在評估">還在評估</option>
     </select>
     <p class="consent">提交即表示您同意本資料僅供 PRSM 選址診斷服務使用，不會提供給第三方。</p>
-    <button class="submit-btn" onclick="submitLead()">&#9989; 送出並查看完整報告</button>
+    <button class="submit-btn" onclick="submitLead()">送出並查看完整報告</button>
   </div>
 </div>
 <script>
@@ -199,7 +198,7 @@ async function analyze(){
   btn.textContent='AI 診斷中...';
   btn.disabled=true;
   try{
-    var res=await fetch(API,{method:'POST',headers: { 'Content-Type': 'application/json', 'X-Passwheaders:{'Content-Type':'application/json'},ord': 'PRSM5566' },body:JSON.stringify({address:addr,rent:rent,revenue:revenue,password:'PRSM5566'});
+    var res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr,rent:rent,revenue:revenue})});
     if(!res.ok){var err=await res.json();alert('錯誤：'+(err.error||res.status));return;}
     var d=await res.json();
     cachedData=d;
@@ -222,7 +221,7 @@ function submitLead(){
   var phone=document.getElementById('f_phone').value.trim();
   var email=document.getElementById('f_email').value.trim();
   if(!name||!phone||!email){alert('請填寫姓名、手機、Email');return;}
-  document.getElementById('wm_text').textContent=email+' · PRSM';
+  document.getElementById('wm_text').textContent=email+' PRSM';
   document.getElementById('leadModal').classList.remove('active');
   document.getElementById('risk-preview').style.display='none';
   renderFullReport(cachedData);
@@ -245,11 +244,13 @@ function renderFullReport(d){
   document.getElementById('r_drop').textContent=p.revenue_drop_allowance;
   document.getElementById('r_advice').textContent=d.recommendation;
   var st=d.stress_test;
-  document.getElementById('r_rent_up_olr').textContent=st.rent_up_10_percent_olr;
+  var s1=st.scenario_1||{};
+  var s2=st.scenario_2||{};
+  document.getElementById('r_rent_up_olr').textContent=s1.olr||'-';
   var stressEl=document.getElementById('r_stress_olr');
-  stressEl.textContent=st.bad_case_olr;
-  stressEl.className='row-value '+(st.bad_case_olr>=1.0?'stress-ok':'stress-fail');
-  document.getElementById('r_stress_warn').textContent=st.resilience;
+  stressEl.textContent=s2.olr||'-';
+  stressEl.className='row-value '+((s2.olr>=1.0)?'stress-ok':'stress-fail');
+  document.getElementById('r_stress_warn').textContent=st.resilience||'-';
   document.getElementById('mapBtn').onclick=function(){window.open('https://www.google.com/maps/search/'+encodeURIComponent(document.getElementById('addr').value)+'+咖啡廳','_blank');};
   document.getElementById('result').style.display='block';
   document.getElementById('result').scrollIntoView({behavior:'smooth'});
