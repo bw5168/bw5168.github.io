@@ -15,6 +15,12 @@ h1{color:#38bdf8;font-size:1.6rem;margin-bottom:6px;}
 .input-card{background:#1e293b;border-radius:12px;padding:20px;margin-bottom:16px;}
 input{width:100%;padding:12px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff;font-size:1rem;margin-bottom:12px;}
 input:focus{outline:none;border-color:#38bdf8;}
+select{width:100%;padding:12px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff;font-size:1rem;margin-bottom:12px;}
+select:focus{outline:none;border-color:#38bdf8;}
+.row-inputs{display:flex;gap:10px;}
+.row-inputs input{flex:1;}
+.estimate-box{background:#0f172a;border-radius:8px;padding:12px;margin-bottom:12px;font-size:0.85rem;color:#94a3b8;}
+.estimate-box span{color:#38bdf8;font-weight:bold;}
 button.main-btn{width:100%;padding:14px;background:#0ea5e9;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer;font-weight:bold;}
 button.main-btn:hover{background:#0284c7;}
 button.main-btn:disabled{background:#334155;cursor:not-allowed;}
@@ -71,12 +77,31 @@ button.main-btn:disabled{background:#334155;cursor:not-allowed;}
   <div class="header">
     <div class="badge">PRSM V3 · District Intelligence</div>
     <h1>PRSM 選址存活診斷引擎</h1>
-    <p class="sub">輸入地址與租金，AI 自動診斷營運風險並提供改善處方</p>
+    <p class="sub">輸入地址與營運數據，AI 自動診斷營運風險</p>
   </div>
   <div class="input-card">
     <input id="addr" type="text" placeholder="例：台北市中山區南京東路二段45號">
-    <input id="rent" type="number" placeholder="月租金（元）例：50000">
-    <input id="revenue" type="number" placeholder="預估月營收（元）例：300000">
+    <input id="rent" type="number" placeholder="月租金（元）例：80000" oninput="calcRevenue()">
+    <select id="industry" onchange="calcRevenue()">
+      <option value="">選擇業種</option>
+      <option value="coffee">咖啡廳／飲料店</option>
+      <option value="restaurant">餐廳／小吃</option>
+      <option value="convenience">便利商店／超商</option>
+      <option value="fitness">健身／瑜珈</option>
+      <option value="laundry">自助洗衣</option>
+      <option value="clinic">診所／醫美</option>
+      <option value="retail">零售／服飾</option>
+      <option value="other">其他</option>
+    </select>
+    <div class="row-inputs">
+      <input id="area" type="number" placeholder="坪數 例：20" oninput="calcRevenue()">
+      <input id="price" type="number" placeholder="客單價（元）例：150" oninput="calcRevenue()">
+      <input id="customers" type="number" placeholder="日來客數 例：80" oninput="calcRevenue()">
+    </div>
+    <div class="estimate-box" id="estimate-box" style="display:none">
+      預估月營收：<span id="est-revenue">-</span>
+      （客單價 × 日來客數 × 30天）
+    </div>
     <button class="main-btn" onclick="analyze()">立即診斷</button>
   </div>
   <div id="risk-preview">
@@ -99,14 +124,18 @@ button.main-btn:disabled{background:#334155;cursor:not-allowed;}
         <span class="zone-tag" id="r_zone"></span>
       </div>
       <div class="olr-num" id="r_olr">-</div>
-      <div class="olr-label">營租比 OLR（安全門檻 <span id="r_threshold">1.3</span>）</div>
+      <div class="olr-label">營租比 OLR（安全門檻 <span id="r_threshold">7</span>）</div>
       <div class="status-badge" id="r_status"></div>
       <div class="district-note" id="r_note"></div>
     </div>
     <div class="card">
       <h3>生存處方箋</h3>
       <div class="row">
-        <span class="row-label">建議安全租金</span>
+        <span class="row-label">預估月營收</span>
+        <span class="row-value" id="r_input_revenue">-</span>
+      </div>
+      <div class="row">
+        <span class="row-label">建議安全租金上限</span>
         <span class="row-value safe" id="r_target_rent">-</span>
       </div>
       <div class="row">
@@ -151,7 +180,7 @@ button.main-btn:disabled{background:#334155;cursor:not-allowed;}
 <div class="modal-overlay" id="leadModal">
   <div class="modal-box">
     <h2>查看完整診斷報告</h2>
-    <p>填寫以下資訊，立即免費解鎖完整報告（含租金安全線、壓力測試、競業分析）</p>
+    <p>填寫以下資訊，立即免費解鎖完整報告</p>
     <label>姓名 *</label>
     <input id="f_name" type="text" placeholder="您的姓名">
     <label>手機 *</label>
@@ -191,18 +220,34 @@ button.main-btn:disabled{background:#334155;cursor:not-allowed;}
 <script>
 var API='https://retail-survival-api-859868518848.asia-east1.run.app/analyze';
 var cachedData=null;
+
+function calcRevenue(){
+  var price=parseInt(document.getElementById('price').value)||0;
+  var customers=parseInt(document.getElementById('customers').value)||0;
+  var revenue=price*customers*30;
+  if(revenue>0){
+    document.getElementById('estimate-box').style.display='block';
+    document.getElementById('est-revenue').textContent='NT$ '+Number(revenue).toLocaleString();
+  } else {
+    document.getElementById('estimate-box').style.display='none';
+  }
+}
+
 async function analyze(){
   var addr=document.getElementById('addr').value.trim();
   if(!addr){alert('請輸入地址');return;}
   var rent=parseInt(document.getElementById('rent').value);
-  var revenue=parseInt(document.getElementById('revenue').value);
   if(!rent||rent<=0){alert('請輸入月租金');return;}
-  if(!revenue||revenue<=0){alert('請輸入預估月營收');return;}
+  var price=parseInt(document.getElementById('price').value)||0;
+  var customers=parseInt(document.getElementById('customers').value)||0;
+  var revenue=price*customers*30;
+  if(revenue<=0){alert('請輸入客單價和日來客數');return;}
+  var industry=document.getElementById('industry').value||'other';
   var btn=document.querySelector('.main-btn');
   btn.textContent='AI 診斷中...';
   btn.disabled=true;
   try{
-    var res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr,rent:rent,revenue:revenue})});
+    var res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr,rent:rent,revenue:revenue,industry:industry})});
     if(!res.ok){var err=await res.json();alert('錯誤：'+(err.error||res.status));return;}
     var d=await res.json();
     cachedData=d;
@@ -221,7 +266,9 @@ async function analyze(){
   btn.textContent='立即診斷';
   btn.disabled=false;
 }
+
 function openModal(){document.getElementById('leadModal').classList.add('active');}
+
 function submitLead(){
   var name=document.getElementById('f_name').value.trim();
   var phone=document.getElementById('f_phone').value.trim();
@@ -232,9 +279,12 @@ function submitLead(){
   document.getElementById('risk-preview').style.display='none';
   renderFullReport(cachedData);
 }
+
 function renderFullReport(d){
   var rent=parseInt(document.getElementById('rent').value);
-  var revenue=parseInt(document.getElementById('revenue').value);
+  var price=parseInt(document.getElementById('price').value)||0;
+  var customers=parseInt(document.getElementById('customers').value)||0;
+  var revenue=price*customers*30;
   var di=d.district_intelligence;
   var thresh=di.safety_threshold;
   var olrVal=d.analysis_result.current_olr;
@@ -247,6 +297,7 @@ function renderFullReport(d){
   var statusEl=document.getElementById('r_status');
   statusEl.className='status-badge '+sc;
   statusEl.textContent=olrVal>=thresh?'✅ 安全':(olrVal>=thresh*0.8?'⚠️ 警戒':'🚨 危險');
+  document.getElementById('r_input_revenue').textContent='NT$ '+Number(revenue).toLocaleString();
   var p=d.prescription;
   document.getElementById('r_target_rent').textContent='NT$ '+Number(p.safe_rent).toLocaleString();
   document.getElementById('r_nego').textContent=p.negotiation_percent+'（NT$ '+Number(p.negotiation_margin).toLocaleString()+'）';
@@ -256,7 +307,7 @@ function renderFullReport(d){
   var rateEl=document.getElementById('r_revenue_rate');
   rateEl.textContent=rate+'%';
   rateEl.className='row-value '+(rate>=100?'stress-ok':(rate>=70?'warning':'danger'));
-  document.getElementById('r_drop').textContent=p.revenue_drop_allowance;
+  document.getElementById('r_drop').textContent=olrVal>thresh?p.revenue_drop_allowance:'已低於安全門檻';
   var advice='';
   if(rate<50){advice='警示：您的營收僅達健康目標的'+rate+'%，距離健康水位差距過大，建議重新評估選址或業種。';}
   else if(rate<80){advice='注意：營收達標率'+rate+'%，尚有提升空間，建議強化差異化定位。';}
