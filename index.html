@@ -114,7 +114,7 @@ button.main-btn:disabled{background:#334155;cursor:not-allowed;}
         <span class="row-value danger" id="r_nego">-</span>
       </div>
       <div class="row">
-        <span class="row-label">損益兩平營收目標</span>
+        <span class="row-label">健康營收目標</span>
         <span class="row-value" id="r_revenue_needed">-</span>
       </div>
       <div class="row">
@@ -245,7 +245,7 @@ function renderFullReport(d){
   var p=d.prescription;
   document.getElementById('r_target_rent').textContent='NT$ '+Number(p.safe_rent).toLocaleString();
   document.getElementById('r_nego').textContent=p.negotiation_percent+'（NT$ '+Number(p.negotiation_margin).toLocaleString()+'）';
-  document.getElementById('r_revenue_needed').textContent='NT$ '+Number(Math.round(thresh*rent)).toLocaleString();
+  document.getElementById('r_revenue_needed').textContent='NT$ '+Number(Math.round(rent*7)).toLocaleString();
   document.getElementById('r_drop').textContent=p.revenue_drop_allowance;
   document.getElementById('r_advice').textContent=d.recommendation;
   var st=d.stress_test;
